@@ -1,0 +1,333 @@
+package com.aminmahboubi.housing.model;
+
+import android.provider.Settings;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created by amin on 1/26/18.
+ */
+
+
+public class House {
+
+    String _id;
+    String name;
+    String surname;
+    Integer price;
+    Boolean inclusive;
+    Integer bills;
+    Integer deposit;
+    String address;
+    Campus campus;
+    String neighborhood;
+    String phone;
+    PreferredSex preferredSex;
+    String description;
+    Integer minimumStayRequired;
+    Boolean english;
+    HouseType houseType;
+    Bed bed;
+    Integer numberOfRooms;
+    Integer numberOfPeoples;
+    Boolean pet;
+    Integer floor;
+    Boolean lift;
+    Integer area;
+    List<String> imageLinks;
+    Date availability;
+    Date insertDate;
+    Date updateDate;
+    public House() {
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        Gson gson = new Gson();
+        JSONObject jsonObject = new JSONObject(gson.toJson(this));
+        jsonObject.remove("_id");
+        jsonObject.remove("insertDate");
+        jsonObject.put("_uid", Settings.Secure.ANDROID_ID);
+
+        return jsonObject;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public Boolean getInclusive() {
+        return inclusive;
+    }
+
+    public void setInclusive(Boolean inclusive) {
+        this.inclusive = inclusive;
+    }
+
+    public Integer getBills() {
+        return bills;
+    }
+
+    public void setBills(Integer bills) {
+        this.bills = bills;
+    }
+
+    public Integer getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(Integer deposit) {
+        this.deposit = deposit;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Campus getCampus() {
+        return campus;
+    }
+
+    public void setCampus(Campus campus) {
+        this.campus = campus;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public void setNeighborhood(String neighborhood) {
+        this.neighborhood = neighborhood;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public PreferredSex getPreferredSex() {
+        return preferredSex;
+    }
+
+    public void setPreferredSex(PreferredSex preferredSex) {
+        this.preferredSex = preferredSex;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getMinimumStayRequired() {
+        return minimumStayRequired;
+    }
+
+    public void setMinimumStayRequired(Integer minimumStayRequired) {
+        this.minimumStayRequired = minimumStayRequired;
+    }
+
+    public Boolean getEnglish() {
+        return english;
+    }
+
+    public void setEnglish(Boolean english) {
+        this.english = english;
+    }
+
+    public HouseType getHouseType() {
+        return houseType;
+    }
+
+    public void setHouseType(HouseType houseType) {
+        this.houseType = houseType;
+    }
+
+    public Bed getBed() {
+        return bed;
+    }
+
+    public void setBed(Bed bed) {
+        this.bed = bed;
+    }
+
+    public Integer getNumberOfRooms() {
+        return numberOfRooms;
+    }
+
+    public void setNumberOfRooms(Integer numberOfRooms) {
+        this.numberOfRooms = numberOfRooms;
+    }
+
+    public Integer getNumberOfPeoples() {
+        return numberOfPeoples;
+    }
+
+    public void setNumberOfPeoples(Integer numberOfPeoples) {
+        this.numberOfPeoples = numberOfPeoples;
+    }
+
+    public Boolean getPet() {
+        return pet;
+    }
+
+    public void setPet(Boolean pet) {
+        this.pet = pet;
+    }
+
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
+    public Boolean getLift() {
+        return lift;
+    }
+
+    public void setLift(Boolean lift) {
+        this.lift = lift;
+    }
+
+    public Integer getArea() {
+        return area;
+    }
+
+    public void setArea(Integer area) {
+        this.area = area;
+    }
+
+    public List<String> getImageLinks() {
+        return imageLinks;
+    }
+
+    public void setImageLinks(List<String> imageLinks) {
+        this.imageLinks = imageLinks;
+    }
+
+    public Date getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Date availability) {
+        this.availability = availability;
+    }
+
+    public Date getInsertDate() {
+        return insertDate;
+    }
+
+    public void setInsertDate(Date insertDate) {
+        this.insertDate = insertDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    @Override
+    public String toString() {
+        return "House{" +
+                "_id='" + _id + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", price=" + price +
+                ", inclusive=" + inclusive +
+                ", bills=" + bills +
+                ", deposit=" + deposit +
+                ", address='" + address + '\'' +
+                ", campus=" + campus +
+                ", neighborhood='" + neighborhood + '\'' +
+                ", phone='" + phone + '\'' +
+                ", preferredSex=" + preferredSex +
+                ", description='" + description + '\'' +
+                ", minimumStayRequired=" + minimumStayRequired +
+                ", english=" + english +
+                ", houseType=" + houseType +
+                ", bed=" + bed +
+                ", numberOfRooms=" + numberOfRooms +
+                ", numberOfPeoples=" + numberOfPeoples +
+                ", pet=" + pet +
+                ", floor=" + floor +
+                ", lift=" + lift +
+                ", area=" + area +
+                ", imageLinks=" + imageLinks +
+                ", availability=" + availability +
+                ", insertDate=" + insertDate +
+                ", updateDate=" + updateDate +
+                '}';
+    }
+
+    public enum Campus {
+        @SerializedName("0")Leonardo,
+        @SerializedName("1")Bovisa,
+        @SerializedName("2")None;
+    }
+
+    public enum PreferredSex {
+        @SerializedName("0")Girl,
+        @SerializedName("1")Boy,
+        @SerializedName("2")Both;
+    }
+
+    public enum HouseType {
+        @SerializedName("0")Bed,
+        @SerializedName("1")Bedroom,
+        @SerializedName("2")House;
+    }
+
+    public enum Bed {
+        @SerializedName("0")Single,
+        @SerializedName("1")Double,
+        @SerializedName("2")King;
+    }
+}
