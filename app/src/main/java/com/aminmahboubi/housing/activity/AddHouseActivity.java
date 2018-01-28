@@ -1,5 +1,6 @@
 package com.aminmahboubi.housing.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,7 +14,6 @@ import com.aminmahboubi.housing.R;
 import com.aminmahboubi.housing.model.House;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
-import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
@@ -23,12 +23,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.common.collect.Range;
 
-import java.util.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class AddHouseActivity extends AppCompatActivity {
     final String TAG = "AddHouseActivity";
 
     AwesomeValidation validation;
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
+
 
     EditText name;
     EditText surname;
@@ -66,16 +71,18 @@ public class AddHouseActivity extends AppCompatActivity {
     Button save;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initUI();
         initValidation();
 
 
         save.setOnClickListener(v -> {
-            if (validation.validate()){
+            if (validation.validate()) {
                 House newHouse = new House();
 
                 newHouse.setName(name.getText().toString());
@@ -87,7 +94,7 @@ public class AddHouseActivity extends AppCompatActivity {
                     newHouse.setAddress(address.getAddress().toString());
                     newHouse.setLat(address.getLatLng().latitude);
                     newHouse.setLng(address.getLatLng().longitude);
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Enter a Valid Adress", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -107,17 +114,23 @@ public class AddHouseActivity extends AppCompatActivity {
                 newHouse.setDeposit(Integer.valueOf(deposit.getText().toString()));
                 newHouse.setInclusive(billsCheckbox.isChecked());
 
-                if (billsCheckbox.isChecked())
+                if (billsCheckbox.isChecked() || bills.getText().toString().equals(""))
                     newHouse.setBills(0);
                 else
                     newHouse.setBills(Integer.valueOf(bills.getText().toString()));
 
-                if (minimumStayRequiredCheckBox.isChecked())
+                if (minimumStayRequiredCheckBox.isChecked() || minimumStayRequired.getText().toString().equals(""))
                     newHouse.setMinimumStayRequired(Integer.valueOf(minimumStayRequired.getText().toString()));
                 else
                     newHouse.setMinimumStayRequired(0);
 
-                newHouse.setAvailability(new Date(availability.getText().toString()));
+                try {
+                    newHouse.setAvailability(dateFormat.parse(availability.getText().toString()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Enter a Valid Availability Date", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 newHouse.setPet(pet.isChecked());
                 newHouse.setEnglish(english.isChecked());
@@ -129,7 +142,6 @@ public class AddHouseActivity extends AppCompatActivity {
 
             }
         });
-
 
 
     }
@@ -204,7 +216,7 @@ public class AddHouseActivity extends AppCompatActivity {
         validation.addValidation(name, "[a-zA-Z\\s]+", "Enter a Valid Name");
         validation.addValidation(surname, "[a-zA-Z\\s]+", "Enter a Valid Surname");
         validation.addValidation(email, android.util.Patterns.EMAIL_ADDRESS, "Valid Email Required");
-        String phoneRegex = "^(\\((00|\\+)39\\)|(00|\\+)39)?(38[890]|34[7-90]|36[680]|33[3-90]|32[89])\\d{7}$\n";
+        String phoneRegex = "^\\+(?:[0-9] ?){6,14}[0-9]$";
         validation.addValidation(phone, phoneRegex, "Valid Phone Required");
 
         validation.addValidation(numberOfRooms, Range.closed(1, 10), "Total Room Numbers in House");
@@ -222,10 +234,16 @@ public class AddHouseActivity extends AppCompatActivity {
 //        validation.addValidation(minimumStayRequired, Range.closed(0, 365), "Minimum Stay between 0 and 365 Day");
 
     }
-//TODO VAlidate phone error
-    private boolean validate(House house) {
+
+    //TODO VAlidate phone error
+    private boolean validate(Context context, House house) {
 
         return true;
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }
