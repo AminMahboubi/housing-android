@@ -26,8 +26,10 @@ public class House {
     Integer bills;
     Integer deposit;
     String address;
+    Double lat;
+    Double lng;
     Campus campus;
-    String neighborhood;
+    String email;
     String phone;
     PreferredSex preferredSex;
     String description;
@@ -45,7 +47,24 @@ public class House {
     Date availability;
     Date insertDate;
     Date updateDate;
+
     public House() {
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -130,12 +149,21 @@ public class House {
         this.campus = campus;
     }
 
-    public String getNeighborhood() {
-        return neighborhood;
+    public void setCampus(String campus) {
+        if (campus.equals("Bovisa"))
+            this.campus = Campus.Bovisa;
+        else if (campus.equals("Leonardo"))
+            this.campus = Campus.Leonardo;
+        else if (campus.equals("None"))
+            this.campus = Campus.None;
     }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhone() {
@@ -152,6 +180,14 @@ public class House {
 
     public void setPreferredSex(PreferredSex preferredSex) {
         this.preferredSex = preferredSex;
+    }
+    public void setPreferredSex(String preferredSex) {
+        if (preferredSex.equals("Girl"))
+            this.preferredSex = PreferredSex.Girl;
+        else if (preferredSex.equals("Both"))
+            this.preferredSex = PreferredSex.Both;
+        else if (preferredSex.equals("Boy"))
+            this.preferredSex = PreferredSex.Boy;
     }
 
     public String getDescription() {
@@ -186,12 +222,30 @@ public class House {
         this.houseType = houseType;
     }
 
+    public void setHouseType(String houseType) {
+        if (houseType.equals("Bed"))
+            this.houseType = HouseType.Bed;
+        else if (houseType.equals("Bedroom"))
+            this.houseType = HouseType.Bedroom;
+        else if (houseType.equals("House"))
+            this.houseType = HouseType.House;
+    }
+
     public Bed getBed() {
         return bed;
     }
 
     public void setBed(Bed bed) {
         this.bed = bed;
+    }
+
+    public void setBed(String bed) {
+        if (bed.equals("Single"))
+            this.bed = Bed.Single;
+        else if (bed.equals("King"))
+            this.bed = Bed.King;
+        else if (bed.equals("Double"))
+            this.bed = Bed.Double;
     }
 
     public Integer getNumberOfRooms() {
@@ -285,8 +339,10 @@ public class House {
                 ", bills=" + bills +
                 ", deposit=" + deposit +
                 ", address='" + address + '\'' +
+                ", lat='" + lat + '\'' +
+                ", lng='" + lng + '\'' +
                 ", campus=" + campus +
-                ", neighborhood='" + neighborhood + '\'' +
+                ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", preferredSex=" + preferredSex +
                 ", description='" + description + '\'' +
