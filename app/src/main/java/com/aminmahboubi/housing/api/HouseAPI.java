@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by amin on 1/26/18.
@@ -43,25 +45,27 @@ public class HouseAPI {
     public void getAll(final GetAllHouseAPIListener getAllHouseAPIListener) {
 
         StringRequest getAll = new StringRequest(Request.Method.GET, baseUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            ArrayList<House> houses = parseGetAllJSON(response);
-                            getAllHouseAPIListener.onSuccess(houses);
-                        } catch (JSONException e) {
-                            getAllHouseAPIListener.onError(e);
-                        }
+                response -> {
+                    try {
+                        ArrayList<House> houses = parseGetAllJSON(response);
+                        getAllHouseAPIListener.onSuccess(houses);
+                    } catch (JSONException e) {
+                        getAllHouseAPIListener.onError(e);
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError e) {
-                getAllHouseAPIListener.onError(e);
-
-            }
-        });
+                }, e -> getAllHouseAPIListener.onError(e));
 
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(getAll);
+    }
+
+    public ArrayList<House> getAllSync() throws ExecutionException, InterruptedException, JSONException {
+
+        RequestFuture<String> requestFuture = RequestFuture.newFuture();
+        StringRequest getAll = new StringRequest(Request.Method.GET, baseUrl, requestFuture, requestFuture);
+        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(getAll);
+
+        String response = requestFuture.get();
+        ArrayList<House> houses = parseGetAllJSON(response);
+        return houses;
     }
 
     public void postHouse(House house) throws JSONException {
