@@ -1,9 +1,11 @@
 package com.aminmahboubi.housing.activity;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -14,6 +16,7 @@ import com.aminmahboubi.housing.R;
 import com.aminmahboubi.housing.model.House;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.helper.CustomValidation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
@@ -26,6 +29,8 @@ import com.google.common.collect.Range;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class AddHouseActivity extends AppCompatActivity {
@@ -41,6 +46,7 @@ public class AddHouseActivity extends AppCompatActivity {
     EditText phone;
 
     PlaceAutocompleteFragment placeAutocompleteFragment;
+    EditText addressValidator;
     Place address;
     Spinner campus;
     Spinner houseType;
@@ -70,6 +76,8 @@ public class AddHouseActivity extends AppCompatActivity {
 
     Button save;
 
+    Boolean minimumStayRequiredCheck = false;
+    Boolean billsCheck = true;
 
 
     @Override
@@ -82,69 +90,21 @@ public class AddHouseActivity extends AppCompatActivity {
 
 
         save.setOnClickListener(v -> {
-            if (validation.validate()) {
-                House newHouse = new House();
+            try {
+                if (validation.validate()) {
+                    House newHouse = newHouse();
+                    Log.d(TAG, "onCreate: " + newHouse);
 
-                newHouse.setName(name.getText().toString());
-                newHouse.setSurname(surname.getText().toString());
-                newHouse.setPhone(phone.getText().toString());
-                newHouse.setEmail(email.getText().toString());
-
-                if (address != null) {
-                    newHouse.setAddress(address.getAddress().toString());
-                    newHouse.setLat(address.getLatLng().latitude);
-                    newHouse.setLng(address.getLatLng().longitude);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Enter a Valid Adress", Toast.LENGTH_SHORT).show();
-                    return;
                 }
-
-                newHouse.setCampus(campus.getSelectedItem().toString());
-                newHouse.setHouseType(houseType.getSelectedItem().toString());
-                newHouse.setBed(bed.getSelectedItem().toString());
-
-                newHouse.setNumberOfRooms(Integer.valueOf(numberOfRooms.getText().toString()));
-                newHouse.setNumberOfPeoples(Integer.valueOf(numberOfPeoples.getText().toString()));
-                newHouse.setFloor(Integer.valueOf(floor.getText().toString()));
-                newHouse.setArea(Integer.valueOf(area.getText().toString()));
-
-                newHouse.setPreferredSex(preferredSex.getSelectedItem().toString());
-
-                newHouse.setPrice(Integer.valueOf(price.getText().toString()));
-                newHouse.setDeposit(Integer.valueOf(deposit.getText().toString()));
-                newHouse.setInclusive(billsCheckbox.isChecked());
-
-                if (billsCheckbox.isChecked() || bills.getText().toString().equals(""))
-                    newHouse.setBills(0);
-                else
-                    newHouse.setBills(Integer.valueOf(bills.getText().toString()));
-
-                if (minimumStayRequiredCheckBox.isChecked() || minimumStayRequired.getText().toString().equals(""))
-                    newHouse.setMinimumStayRequired(Integer.valueOf(minimumStayRequired.getText().toString()));
-                else
-                    newHouse.setMinimumStayRequired(0);
-
-                try {
-                    newHouse.setAvailability(dateFormat.parse(availability.getText().toString()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Enter a Valid Availability Date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                newHouse.setPet(pet.isChecked());
-                newHouse.setEnglish(english.isChecked());
-                newHouse.setLift(lift.isChecked());
-
-                newHouse.setDescription(description.getText().toString());
-
-                Log.d(TAG, "onCreate: " + newHouse);
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         });
 
 
     }
+
 
     private void initUI() {
         name = findViewById(R.id.name);
@@ -152,12 +112,13 @@ public class AddHouseActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         phone = findViewById(R.id.phone);
 
+        addressValidator = findViewById(R.id.address);
         placeAutocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         placeAutocompleteFragment.setFilter(new AutocompleteFilter.Builder().setCountry("IT").build());
         placeAutocompleteFragment.setBoundsBias(new LatLngBounds(new LatLng(45.399976, 9.049262), new LatLng(45.576915, 9.315196)));
 
-        placeAutocompleteFragment.setHint("Enter House Address");
+        placeAutocompleteFragment.setHint("Search House Address");
         placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -166,10 +127,19 @@ public class AddHouseActivity extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                Toast.makeText(getApplicationContext(), "An error occurred: " + status, Toast.LENGTH_SHORT).show();
+                address = null;
+                Toast.makeText(getApplicationContext(), "An error occurred while getting address: " + status, Toast.LENGTH_SHORT).show();
             }
         });
-
+        placeAutocompleteFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        placeAutocompleteFragment.setText("");
+                        view.setVisibility(View.GONE);
+                        address = null;
+                    }
+                });
         campus = findViewById(R.id.campus);
         houseType = findViewById(R.id.house);
         bed = findViewById(R.id.bed);
@@ -186,6 +156,7 @@ public class AddHouseActivity extends AppCompatActivity {
         bills = findViewById(R.id.bills);
         deposit = findViewById(R.id.deposit);
         billsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            billsCheck = isChecked;
             bills.setEnabled(!isChecked);
             if (!isChecked)
                 bills.requestFocus();
@@ -195,6 +166,7 @@ public class AddHouseActivity extends AppCompatActivity {
         minimumStayRequiredCheckBox = findViewById(R.id.stayCheck);
         minimumStayRequired = findViewById(R.id.stay);
         minimumStayRequiredCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            minimumStayRequiredCheck = isChecked;
             minimumStayRequired.setEnabled(isChecked);
             if (isChecked)
                 minimumStayRequired.requestFocus();
@@ -216,29 +188,136 @@ public class AddHouseActivity extends AppCompatActivity {
         validation.addValidation(name, "[a-zA-Z\\s]+", "Enter a Valid Name");
         validation.addValidation(surname, "[a-zA-Z\\s]+", "Enter a Valid Surname");
         validation.addValidation(email, android.util.Patterns.EMAIL_ADDRESS, "Valid Email Required");
-        String phoneRegex = "^\\+(?:[0-9] ?){6,14}[0-9]$";
-        validation.addValidation(phone, phoneRegex, "Valid Phone Required");
-
+        validation.addValidation(phone, "Valid Phone Required", new CustomValidation() {
+            @Override
+            public boolean compare(String input) {
+                if (input.length() < 9)
+                    return false;
+                return PhoneNumberUtils.isGlobalPhoneNumber(input);
+            }
+        });
+        validation.addValidation(addressValidator, "Enter a valid Address", new CustomValidation() {
+            @Override
+            public boolean compare(String input) {
+                if (address == null)
+                    return false;
+                return true;
+            }
+        });
         validation.addValidation(numberOfRooms, Range.closed(1, 10), "Total Room Numbers in House");
         validation.addValidation(numberOfPeoples, Range.closed(1, 10), "Total People Numbers in House");
         validation.addValidation(floor, Range.closed(0, 20), "Which floor is the house?");
         validation.addValidation(area, Range.closed(5, 500), "Area of the House/Room");
-
-
         validation.addValidation(price, Range.closed(1, 3000), "Rent price between 1 and 3000 Euro");
-//        validation.addValidation(bills, Range.closed(0, 500), "Bills between 0 and 500 Euro");
+        validation.addValidation(bills, "Bills between 0 and 500 Euro", new CustomValidation() {
+            @Override
+            public boolean compare(String input) {
+                if (!billsCheck) {
+                    if (input.length() == 0)
+                        return false;
+                    else {
+                        int value = Integer.valueOf(input);
+                        if (value < 0 || value > 500)
+                            return false;
+                    }
+                }
+                return true;
+            }
+        });
         validation.addValidation(deposit, Range.closed(0, 10000), "Deposit between 0 and 10k Euro");
+        validation.addValidation(availability, "House become free from ...?", new CustomValidation() {
+            @Override
+            public boolean compare(String input) {
+                String dateRegex = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
+                if (!input.matches(dateRegex))
+                    return false;
+                try {
+                    Date date = dateFormat.parse(input);
+                    date.setTime(date.getTime() + 1);
 
-        String dateRegex = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
-        validation.addValidation(availability, dateRegex, "Input a valid Date");
-//        validation.addValidation(minimumStayRequired, Range.closed(0, 365), "Minimum Stay between 0 and 365 Day");
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    if (calendar.getTime().after(dateFormat.parse(input)))
+                        return false;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+                return true;
+            }
+        });
+        validation.addValidation(minimumStayRequired, "Minimum Stay between 0 and 365 Day", new CustomValidation() {
+            @Override
+            public boolean compare(String input) {
+                if (minimumStayRequiredCheck) {
+                    if (input.length() == 0)
+                        return false;
+                    else {
+                        int value = Integer.valueOf(input);
+                        if (value < 0 || value > 365)
+                            return false;
+                    }
+                }
+                return true;
+            }
+        });
 
     }
 
-    //TODO VAlidate phone error
-    private boolean validate(Context context, House house) {
+    private House newHouse() {
+        House newHouse = new House();
 
-        return true;
+        newHouse.setName(name.getText().toString());
+        newHouse.setSurname(surname.getText().toString());
+        newHouse.setPhone(phone.getText().toString());
+        newHouse.setEmail(email.getText().toString());
+
+        newHouse.setAddress(address.getAddress().toString());
+        newHouse.setLat(address.getLatLng().latitude);
+        newHouse.setLng(address.getLatLng().longitude);
+
+        newHouse.setCampus(campus.getSelectedItem().toString());
+        newHouse.setHouseType(houseType.getSelectedItem().toString());
+        newHouse.setBed(bed.getSelectedItem().toString());
+
+        newHouse.setNumberOfRooms(Integer.valueOf(numberOfRooms.getText().toString()));
+        newHouse.setNumberOfPeoples(Integer.valueOf(numberOfPeoples.getText().toString()));
+        newHouse.setFloor(Integer.valueOf(floor.getText().toString()));
+        newHouse.setArea(Integer.valueOf(area.getText().toString()));
+
+        newHouse.setPreferredSex(preferredSex.getSelectedItem().toString());
+
+        newHouse.setPrice(Integer.valueOf(price.getText().toString()));
+        newHouse.setDeposit(Integer.valueOf(deposit.getText().toString()));
+        newHouse.setInclusive(billsCheckbox.isChecked());
+
+        if (billsCheckbox.isChecked() || bills.getText().toString().equals(""))
+            newHouse.setBills(0);
+        else
+            newHouse.setBills(Integer.valueOf(bills.getText().toString()));
+
+        if (minimumStayRequiredCheckBox.isChecked() && !minimumStayRequired.getText().toString().equals(""))
+            newHouse.setMinimumStayRequired(Integer.valueOf(minimumStayRequired.getText().toString()));
+        else
+            newHouse.setMinimumStayRequired(0);
+
+        try {
+            newHouse.setAvailability(dateFormat.parse(availability.getText().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        newHouse.setPet(pet.isChecked());
+        newHouse.setEnglish(english.isChecked());
+        newHouse.setLift(lift.isChecked());
+
+        newHouse.setDescription(description.getText().toString());
+
+        return newHouse;
     }
 
     @Override
