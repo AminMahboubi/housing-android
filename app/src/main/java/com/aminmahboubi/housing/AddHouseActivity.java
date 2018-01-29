@@ -1,4 +1,4 @@
-package com.aminmahboubi.housing.activity;
+package com.aminmahboubi.housing;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

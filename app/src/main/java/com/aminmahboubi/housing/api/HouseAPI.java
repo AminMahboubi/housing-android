@@ -2,11 +2,10 @@ package com.aminmahboubi.housing.api;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.aminmahboubi.housing.model.House;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
@@ -15,7 +14,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -69,20 +67,16 @@ public class HouseAPI {
     }
 
     public void postHouse(House house) throws JSONException {
-        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d("postHouse", "onResponse: " + response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError e) {
-                Log.e("postHouse", "onResponse: " + e);
-            }
-        });
+        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(mContext),
+                response -> {
+                    Log.d("postHouse", "onResponse: " + response);
+                    Toast.makeText(mContext, response.toString(), Toast.LENGTH_SHORT).show();
+                },
+                e -> {Log.e("postHouse", "onResponse: " + e);
+                    Toast.makeText(mContext, e.toString(), Toast.LENGTH_SHORT).show();
+                });
 
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(postHouse);
-
     }
 
     private ArrayList<House> parseGetAllJSON(String response) throws JSONException {

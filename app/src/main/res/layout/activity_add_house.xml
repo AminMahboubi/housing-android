@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context="com.aminmahboubi.housing.activity.AddHouseActivity">
+    tools:context="com.aminmahboubi.housing.AddHouseActivity">
 
     <LinearLayout
         android:orientation="vertical"

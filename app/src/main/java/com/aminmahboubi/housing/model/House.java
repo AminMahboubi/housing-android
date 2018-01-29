@@ -1,7 +1,9 @@
 package com.aminmahboubi.housing.model;
 
+import android.content.Context;
 import android.provider.Settings;
 
+import com.aminmahboubi.housing.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -67,12 +69,12 @@ public class House {
         this.lng = lng;
     }
 
-    public JSONObject toJSON() throws JSONException {
+    public JSONObject toJSON(Context context) throws JSONException {
         Gson gson = new Gson();
         JSONObject jsonObject = new JSONObject(gson.toJson(this));
         jsonObject.remove("_id");
         jsonObject.remove("insertDate");
-        jsonObject.put("_uid", Settings.Secure.ANDROID_ID);
+        jsonObject.put("_uid", UniqueIdentifier.getUniqueID(context));
 
         return jsonObject;
     }

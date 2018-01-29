@@ -3,41 +3,30 @@ package com.aminmahboubi.housing;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import com.aminmahboubi.housing.activity.AddHouseActivity;
 import com.aminmahboubi.housing.api.HouseAPI;
 import com.aminmahboubi.housing.model.House;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -78,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+
         final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
         dialog.setMessage("Loading House Data, Please Wait...");
 
@@ -104,17 +94,9 @@ public class MainActivity extends AppCompatActivity
                     mMap = googleMap;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.46, 9.19), 11));
 
-                    Geocoder coder = new Geocoder(getApplicationContext());
                     for (House house : houses) {
-
-                        try {
-                            List<Address> address = coder.getFromLocationName(house.getAddress() + " Milan, IT", 1);
-                            LatLng latLng = new LatLng(address.get(0).getLatitude(), address.get(0).getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(house.getName()));
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        LatLng latLng = new LatLng(house.getLat(), house.getLng());
+                        mMap.addMarker(new MarkerOptions().position(latLng).title(house.getName()));
                     }
 
                 });
@@ -125,18 +107,6 @@ public class MainActivity extends AppCompatActivity
             protected ArrayList<House> doInBackground(Void... voids) {
                 try {
                     ArrayList<House> houses = HouseAPI.getInstance(getApplicationContext()).getAllSync();
-
-                    Geocoder coder = new Geocoder(getApplicationContext());
-                    for (House house : houses) {
-                        try {
-                            List<Address> address = coder.getFromLocationName(house.getAddress() + " Milan, Italy", 1);
-                            house.setLat(address.get(0).getLatitude());
-                            house.setLng(address.get(0).getLongitude());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                     return houses;
                 } catch (Exception e) {
                     e.printStackTrace();
