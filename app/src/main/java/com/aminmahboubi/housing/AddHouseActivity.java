@@ -130,13 +130,10 @@ public class AddHouseActivity extends AppCompatActivity {
             }
         });
         placeAutocompleteFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        placeAutocompleteFragment.setText("");
-                        view.setVisibility(View.GONE);
-                        address = null;
-                    }
+                .setOnClickListener(view -> {
+                    placeAutocompleteFragment.setText("");
+                    view.setVisibility(View.GONE);
+                    address = null;
                 });
         campus = findViewById(R.id.campus);
         houseType = findViewById(R.id.house);
@@ -274,7 +271,7 @@ public class AddHouseActivity extends AppCompatActivity {
         newHouse.setPhone(phone.getText().toString());
         newHouse.setEmail(email.getText().toString());
 
-        newHouse.setAddress(address.getAddress().toString());
+        newHouse.setAddress(address.getName().toString());
         newHouse.setLat(address.getLatLng().latitude);
         newHouse.setLng(address.getLatLng().longitude);
 

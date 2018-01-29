@@ -4,6 +4,7 @@ import android.content.Context;
 import android.provider.Settings;
 
 import com.aminmahboubi.housing.MainActivity;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -67,6 +68,10 @@ public class House {
 
     public void setLng(Double lng) {
         this.lng = lng;
+    }
+
+    public LatLng getLatLng(){
+        return new LatLng(this.getLat(), this.getLng());
     }
 
     public JSONObject toJSON(Context context) throws JSONException {
