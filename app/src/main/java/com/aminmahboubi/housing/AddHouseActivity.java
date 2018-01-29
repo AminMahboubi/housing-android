@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.aminmahboubi.housing.R;
+import com.aminmahboubi.housing.api.HouseAPI;
 import com.aminmahboubi.housing.model.House;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -38,7 +39,6 @@ public class AddHouseActivity extends AppCompatActivity {
 
     AwesomeValidation validation;
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
-
 
     EditText name;
     EditText surname;
@@ -79,22 +79,22 @@ public class AddHouseActivity extends AppCompatActivity {
     Boolean minimumStayRequiredCheck = false;
     Boolean billsCheck = true;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initUI();
         initValidation();
-
 
         save.setOnClickListener(v -> {
             try {
                 if (validation.validate()) {
                     House newHouse = newHouse();
+                    Toast.makeText(getApplicationContext(), "Saving House", Toast.LENGTH_SHORT).show();
+                    HouseAPI.getInstance(getApplicationContext()).postHouse(newHouse);
                     Log.d(TAG, "onCreate: " + newHouse);
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -102,9 +102,7 @@ public class AddHouseActivity extends AppCompatActivity {
 
         });
 
-
     }
-
 
     private void initUI() {
         name = findViewById(R.id.name);
