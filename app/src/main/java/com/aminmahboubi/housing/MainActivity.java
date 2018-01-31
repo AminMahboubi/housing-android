@@ -2,49 +2,41 @@ package com.aminmahboubi.housing;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.aminmahboubi.housing.api.HouseAPI;
 import com.aminmahboubi.housing.model.House;
-import com.aminmahboubi.housing.view.CustomInfoWindowAdapter;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.aminmahboubi.housing.view.ListFragment;
+import com.aminmahboubi.housing.view.MapFragment;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     final String TAG = "MainActivity";
 
-    private GoogleMap mMap;
     private ArrayList<House> houses;
+    private MapFragment mapFragment;
+    private ListFragment listFragment;
+    private SearchView searchView;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -69,8 +61,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
 
         final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
         dialog.setMessage("Loading Data, Please Wait...");
@@ -88,33 +78,18 @@ public class MainActivity extends AppCompatActivity
                 super.onPostExecute(houseList);
                 if (houseList == null) {
                     Toast.makeText(getApplicationContext(), "Could'nt Fetch Data, Please Check Your Connection!", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+                    finish();
                     return;
                 }
+
                 houses = houseList;
+                mapFragment = MapFragment.newInstance(houses);
+                listFragment = ListFragment.newInstance(houses);
 
-                mapFragment.getMapAsync(googleMap -> {
-                    mMap = googleMap;
-                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.46, 9.19), 11));
-                    mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MainActivity.this));
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, mapFragment).commit();
 
-                    BitmapDescriptor markerIcon = getBitmapFromVectorDrawable(getApplicationContext(), R.drawable.ic_place_black_24dp);
-
-                    for (House house : houses) {
-                        mMap.addMarker(new MarkerOptions().position(house.getLatLng()).icon(markerIcon)).setTag(house);
-                    }
-
-                    mMap.setOnInfoWindowClickListener(marker -> {
-                        House house = (House) marker.getTag();
-
-                        Intent intent = new Intent(MainActivity.this, HouseActivity.class);
-                        intent.putExtra("house", house);
-                        startActivity(intent);
-                    });
-
-                    dialog.dismiss();
-                });
-
+                dialog.dismiss();
             }
 
             @Override
@@ -136,11 +111,53 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (!searchView.isIconified()) {
+                searchView.setIconified(true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, mapFragment).commit();
+            } else
+                super.onBackPressed();
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnSearchClickListener(v -> getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, listFragment).commit());
+        searchView.setOnCloseListener(() -> {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, mapFragment).commit();
+            return false;
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                listFragment.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                listFragment.getFilter().filter(query);
+                return false;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.action_search) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -154,7 +171,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_owned) {
             Intent intent = new Intent(MainActivity.this, OwnedHouseActivity.class);
             startActivity(intent);
-
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -162,18 +178,4 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    private BitmapDescriptor getBitmapFromVectorDrawable(Context context, int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
 }

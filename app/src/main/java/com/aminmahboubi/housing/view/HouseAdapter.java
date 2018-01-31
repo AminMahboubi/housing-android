@@ -25,6 +25,7 @@ public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.ViewHolder> 
 
     public HouseAdapter(List<House> houseList) {
         this.houseList = houseList;
+        this.houseListFiltered = houseList;
     }
 
     @Override
