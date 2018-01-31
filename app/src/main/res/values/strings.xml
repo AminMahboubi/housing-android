@@ -7,9 +7,34 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="no_people">No. People:</string>
+    <string name="name">Name:</string>
+    <string name="email">Email:</string>
+    <string name="phone">Phone:</string>
+    <string name="address">Address:</string>
+    <string name="campus">Campus:</string>
+    <string name="renting_a">Renting a:</string>
+    <string name="bed_type">Bed Type:</string>
+    <string name="preferred_sex">Preferred Sex:</string>
+    <string name="rooms">Rooms:</string>
+    <string name="floor_number">Floor Number:</string>
+    <string name="area_sqm">Area (Sqm):</string>
+    <string name="price_m">Price (€/M):</string>
+    <string name="all_bills_included">All Bills Included</string>
+    <string name="bills_m">Bills (€/M):</string>
+    <string name="deposit">Deposit (€):</string>
+    <string name="available_from">Available From:</string>
+    <string name="minimum_stay">Minimum Stay</string>
+    <string name="pet_allowed">Pet Allowed</string>
+    <string name="landlord_speaks_english">Landlord Speaks English</string>
+    <string name="lift">Lift</string>
+    <string name="more_information">More Information:</string>
+    <string name="save">Save</string>
+    <string name="close_to_campus">Close to Campus:</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="search">Search</string>
+
 
     <string-array name="sex">
         <item>Both</item>
@@ -34,5 +59,8 @@
         <item>Double</item>
         <item>King</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

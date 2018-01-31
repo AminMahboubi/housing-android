@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     final String TAG = "MainActivity";
 
     private GoogleMap mMap;
+    private ArrayList<House> houses;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -54,13 +56,9 @@ public class MainActivity extends AppCompatActivity
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent AddHouseIntent = new Intent(getApplicationContext(), AddHouseActivity.class);
-                startActivity(AddHouseIntent);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-            }
+        fab.setOnClickListener(v -> {
+            Intent AddHouseIntent = new Intent(getApplicationContext(), AddHouseActivity.class);
+            startActivity(AddHouseIntent);
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -86,12 +84,13 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            protected void onPostExecute(ArrayList<House> houses) {
-                super.onPostExecute(houses);
-                if (houses == null) {
+            protected void onPostExecute(ArrayList<House> houseList) {
+                super.onPostExecute(houseList);
+                if (houseList == null) {
                     Toast.makeText(getApplicationContext(), "Could'nt Fetch Data, Please Check Your Connection!", Toast.LENGTH_LONG).show();
                     return;
                 }
+                houses = houseList;
 
                 mapFragment.getMapAsync(googleMap -> {
                     mMap = googleMap;
@@ -105,17 +104,15 @@ public class MainActivity extends AppCompatActivity
                         mMap.addMarker(new MarkerOptions().position(house.getLatLng()).icon(markerIcon)).setTag(house);
                     }
 
-                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                        @Override
-                        public void onInfoWindowClick(Marker marker) {
-                            House house = (House) marker.getTag();
-                            Log.d(TAG, "onInfoWindowClick: " +  house.toString());
-                        }
+                    mMap.setOnInfoWindowClickListener(marker -> {
+                        House house = (House) marker.getTag();
+
+                        Intent intent = new Intent(MainActivity.this, HouseActivity.class);
+                        intent.putExtra("house", house);
+                        startActivity(intent);
                     });
 
-
                     dialog.dismiss();
-
                 });
 
             }
@@ -146,26 +143,23 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_fav) {
+            Intent intent = new Intent(MainActivity.this, FavouriteActivity.class);
+            intent.putExtra("house", houses);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_owned) {
+            Intent intent = new Intent(MainActivity.this, OwnedHouseActivity.class);
+            startActivity(intent);
 
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
     }
 
     private BitmapDescriptor getBitmapFromVectorDrawable(Context context, int drawableId) {

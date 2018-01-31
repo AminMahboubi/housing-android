@@ -9,283 +9,424 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/name"
-            android:hint="Name"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="16dp" />
-
-        <EditText
-            android:id="@+id/surname"
-            android:hint="Surname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
-
-        <EditText
-            android:id="@+id/email"
-            android:hint="Email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/phone"
-            android:hint="Phone Number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="phone" />
-
-        <fragment
-            android:id="@+id/place_autocomplete_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            />
-        <EditText
-            android:id="@+id/address"
-            android:layout_width="match_parent"
-            android:layout_marginTop="-20dp"
-            android:layout_height="40dp"
-            android:enabled="false"
-            android:ems="10"
-             />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Close to Campus:"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_weight=".5" />
-            <Spinner
-                android:id="@+id/campus"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_weight=".5"
-                android:textSize="17sp"
-                android:entries="@array/campus"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        <LinearLayout
+                <EditText
+                    android:id="@+id/name"
+                    android:hint="Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+                <EditText
+                    android:id="@+id/surname"
+                    android:hint="Surname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+                <EditText
+                    android:id="@+id/email"
+                    android:hint="Email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textEmailAddress" />
+
+                <EditText
+                    android:id="@+id/phone"
+                    android:hint="Phone Number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="phone" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Renting a:"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_weight=".5" />
-            <Spinner
-                android:id="@+id/house"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_weight=".5"
-                android:textSize="17sp"
-                android:entries="@array/house"/>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Bed Type:"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_weight=".5" />
-            <Spinner
-                android:id="@+id/bed"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_weight=".5"
-                android:textSize="17sp"
-                android:entries="@array/bed"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Preferred Sex:"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_weight=".5"/>
-            <Spinner
-                android:id="@+id/preferredSex"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_weight=".5"
-                android:textSize="17sp"
-                android:entries="@array/sex"
-                />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="8dp">
+                <fragment
+                    android:id="@+id/place_autocomplete_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                    />
+                <EditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="-20dp"
+                    android:layout_height="40dp"
+                    android:enabled="false"
+                    android:ems="10"
+                    />
 
-        <EditText
-            android:id="@+id/numberOfRooms"
-            android:hint="Number of Rooms"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/close_to_campus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:layout_weight=".5" />
+                    <Spinner
+                        android:id="@+id/campus"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_weight=".5"
+                        android:textSize="17sp"
+                        android:entries="@array/campus"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
-        <EditText
-            android:id="@+id/numberOfPeoples"
-            android:hint="How Many people in the House?"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
-
-        <EditText
-            android:id="@+id/floor"
-            android:hint="Which floor? E.g. 1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
-
-        <EditText
-            android:id="@+id/area"
-            android:hint="Area in Square Meter, E.g. 32"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
-
-
-        <EditText
-            android:id="@+id/price"
-            android:hint="Price in Euro: 700"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <CheckBox
-                android:id="@+id/billsCheck"
-                android:text="All Bills Included"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:checked="true" />
-            <EditText
-                android:id="@+id/bills"
-                android:hint="Bills in Euro"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/renting_a"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:layout_weight=".5" />
+                    <Spinner
+                        android:id="@+id/house"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_weight=".5"
+                        android:textSize="17sp"
+                        android:entries="@array/house"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/bed_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:layout_weight=".5" />
+                    <Spinner
+                        android:id="@+id/bed"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_weight=".5"
+                        android:textSize="17sp"
+                        android:entries="@array/bed"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/preferred_sex"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:layout_weight=".5"/>
+                    <Spinner
+                        android:id="@+id/preferredSex"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_weight=".5"
+                        android:textSize="17sp"
+                        android:entries="@array/sex"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:ems="10"
-                android:layout_weight=".5"
-                android:inputType="number" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        <EditText
-            android:id="@+id/deposit"
-            android:hint="Required Deposit in Euro"
+                <EditText
+                    android:id="@+id/numberOfRooms"
+                    android:hint="Number of Rooms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+                <EditText
+                    android:id="@+id/numberOfPeoples"
+                    android:hint="How Many people in the House?"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+
+                <EditText
+                    android:id="@+id/floor"
+                    android:hint="Which floor? E.g. 1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+
+                <EditText
+                    android:id="@+id/area"
+                    android:hint="Area in Square Meter, E.g. 32"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
-
-        <EditText
-            android:id="@+id/available"
-            android:hint="Available From: E.g. 23/09/2018"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="date" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <CheckBox
-                android:id="@+id/stayCheck"
-                android:text="Minimum Stay"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:checked="false" />
-            <EditText
-                android:id="@+id/stay"
-                android:hint="0 days"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <EditText
+                    android:id="@+id/price"
+                    android:hint="Price in Euro: 700"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <CheckBox
+                        android:id="@+id/billsCheck"
+                        android:text="@string/all_bills_included"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".5"
+                        android:checked="true" />
+                    <EditText
+                        android:id="@+id/bills"
+                        android:hint="Bills in Euro"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:ems="10"
+                        android:layout_weight=".5"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/deposit"
+                    android:hint="Required Deposit in Euro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:ems="10"
-                android:layout_weight=".5"
-                android:inputType="number" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="8dp">
 
+                <EditText
+                    android:id="@+id/available"
+                    android:hint="Available From: E.g. 23/09/2018"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="date" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <CheckBox
+                        android:id="@+id/stayCheck"
+                        android:text="@string/minimum_stay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".5"
+                        android:checked="false" />
+                    <EditText
+                        android:id="@+id/stay"
+                        android:hint="0 days"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:ems="10"
+                        android:layout_weight=".5"
+                        android:inputType="number" />
+                </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/pet"
-            android:text="Pet Allowed"
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="false" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        <CheckBox
-            android:id="@+id/english"
-            android:text="Landlord Speaks English"
+
+                <CheckBox
+                    android:id="@+id/pet"
+                    android:text="@string/pet_allowed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="false" />
+
+                <CheckBox
+                    android:id="@+id/english"
+                    android:text="@string/landlord_speaks_english"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="false" />
+
+                <CheckBox
+                    android:id="@+id/lift"
+                    android:text="@string/lift"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="false" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="false" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        <CheckBox
-            android:id="@+id/lift"
-            android:text="Lift"
+                <EditText
+                    android:id="@+id/description"
+                    android:hint="More Information about the house"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="3"
+                    android:minLines="3"
+                    android:maxLines="10"
+                    android:ems="10"
+                    android:scrollbars="vertical"
+                    android:scrollHorizontally="false"
+                    android:inputType="textMultiLine" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="false" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="4dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        <EditText
-            android:id="@+id/description"
-            android:hint="More Information about the house"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lines="3"
-            android:minLines="3"
-            android:maxLines="10"
-            android:ems="10"
-            android:scrollbars="vertical"
-            android:scrollHorizontally="false"
-            android:inputType="textMultiLine" />
-
-        <Button
-            android:id="@+id/save"
-            android:text="Save"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorAccent"
-             />
-
+                <Button
+                    android:id="@+id/save"
+                    android:text="@string/save"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorAccent"
+                    />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 

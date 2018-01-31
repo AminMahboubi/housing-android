@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Created by amin on 1/26/18.
  */
 
-public interface GetAllHouseAPIListener {
+public interface GetHouseAPIListener {
 
     void onSuccess(ArrayList<House> houses);
 

@@ -28,7 +28,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     @Override
     public View getInfoContents(Marker marker) {
-        View view = context.getLayoutInflater().inflate(R.layout.custom_info_window, null);
+        View view = context.getLayoutInflater().inflate(R.layout.house_card, null);
         House house = (House) marker.getTag();
 
         TextView address = view.findViewById(R.id.address);
@@ -41,7 +41,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         renting.setText(String.format("Renting a %s", house.getHouseType().toString()));
         campus.setText(String.format("Close to Campus %s", house.getCampus().toString()));
         sex.setText(String.format("Preferred Sex is  %s", house.getPreferredSex().toString()));
-        price.setText(String.format("Rent: %s Euro/Month", house.getPrice().toString()));
+        price.setText(String.format("Rent: %s €/M", house.getPrice().toString()));
 
         return view;
     }

@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  */
 
 
-public class House {
+public class House implements Serializable{
 
     String _id;
     String name;
