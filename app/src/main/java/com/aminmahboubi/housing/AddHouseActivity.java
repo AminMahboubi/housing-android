@@ -1,5 +1,9 @@
 package com.aminmahboubi.housing;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,11 +31,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.common.collect.Range;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class AddHouseActivity extends AppCompatActivity {
@@ -79,25 +87,99 @@ public class AddHouseActivity extends AppCompatActivity {
     Boolean minimumStayRequiredCheck = false;
     Boolean billsCheck = true;
 
+    ProgressDialog dialog;
+
     @Override
+    @SuppressLint("StaticFieldLeak")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.new_house);
+
         initUI();
         initValidation();
+
+        House updateHouse;
+        updateHouse = (House) getIntent().getSerializableExtra("house");
+        boolean isUpdate = updateHouse != null;
+        if (isUpdate) {
+            initData(updateHouse);
+            getSupportActionBar().setTitle(R.string.update_house);
+
+        }
 
         save.setOnClickListener(v -> {
             try {
                 if (validation.validate()) {
-                    House newHouse = newHouse();
-                    Toast.makeText(getApplicationContext(), "Saving House", Toast.LENGTH_SHORT).show();
-                    HouseAPI.getInstance(getApplicationContext()).postHouse(newHouse);
-                    Log.d(TAG, "onCreate: " + newHouse);
+                    if (isUpdate) {
+                        new AsyncTask<House, Void, String>() {
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                dialog.setMessage("Updating the House, Please Wait...");
+                                dialog.show();
+                            }
+
+                            @Override
+                            protected void onPostExecute(String message) {
+                                super.onPostExecute(message);
+                                if (message == null) {
+                                    Toast.makeText(getApplicationContext(), R.string.async_null, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                }
+                                dialog.dismiss();
+                                finish();
+                            }
+
+                            @Override
+                            protected String doInBackground(House... house) {
+                                try {
+                                    return HouseAPI.getInstance(getApplicationContext()).updateHouse(house[0]);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    return null;
+                                }
+                            }
+                        }.execute(updateHouse(updateHouse.get_id()));
+                    } else {
+                        new AsyncTask<House, Void, String>() {
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                dialog.setMessage("Saving the House, Please Wait...");
+                                dialog.show();
+                            }
+
+                            @Override
+                            protected void onPostExecute(String message) {
+                                super.onPostExecute(message);
+                                if (message == null) {
+                                    Toast.makeText(getApplicationContext(), R.string.async_null, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                }
+                                dialog.dismiss();
+                                finish();
+                            }
+
+                            @Override
+                            protected String doInBackground(House... house) {
+                                try {
+                                    return HouseAPI.getInstance(getApplicationContext()).postHouse(house[0]);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    return null;
+                                }
+                            }
+                        }.execute(newHouse());
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                dialog.dismiss();
+                Toast.makeText(getApplicationContext(), R.string.async_null, Toast.LENGTH_LONG).show();
             }
 
         });
@@ -174,6 +256,123 @@ public class AddHouseActivity extends AppCompatActivity {
         description = findViewById(R.id.description);
 
         save = findViewById(R.id.save);
+
+        dialog = new ProgressDialog(AddHouseActivity.this);
+        dialog.setCancelable(false);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initData(House house) {
+        name.setText(house.getName());
+        surname.setText(house.getSurname());
+        email.setText(house.getEmail());
+        phone.setText(house.getPhone());
+
+        placeAutocompleteFragment.setText(house.getAddress());
+
+        address = new Place() {
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Override
+            public List<Integer> getPlaceTypes() {
+                return null;
+            }
+
+            @Override
+            public CharSequence getAddress() {
+                return house.getAddress();
+            }
+
+            @Override
+            public Locale getLocale() {
+                return null;
+            }
+
+            @Override
+            public CharSequence getName() {
+                return house.getAddress();
+            }
+
+            @Override
+            public LatLng getLatLng() {
+                return new LatLng(house.getLat(), house.getLng());
+            }
+
+            @Override
+            public LatLngBounds getViewport() {
+                return null;
+            }
+
+            @Override
+            public Uri getWebsiteUri() {
+                return null;
+            }
+
+            @Override
+            public CharSequence getPhoneNumber() {
+                return null;
+            }
+
+            @Override
+            public float getRating() {
+                return 0;
+            }
+
+            @Override
+            public int getPriceLevel() {
+                return 0;
+            }
+
+            @Override
+            public CharSequence getAttributions() {
+                return null;
+            }
+
+            @Override
+            public Place freeze() {
+                return null;
+            }
+
+            @Override
+            public boolean isDataValid() {
+                return false;
+            }
+        };
+
+        List campusArray = Arrays.asList(getResources().getStringArray(R.array.campus));
+        campus.setSelection(campusArray.indexOf(house.getCampus()));
+
+        List houseTypeArray = Arrays.asList(getResources().getStringArray(R.array.house));
+        houseType.setSelection(houseTypeArray.indexOf(house.getHouseType()));
+
+        List bedArray = Arrays.asList(getResources().getStringArray(R.array.bed));
+        bed.setSelection(bedArray.indexOf(house.getBed()));
+
+        numberOfRooms.setText(house.getNumberOfRooms().toString());
+        numberOfPeoples.setText(house.getNumberOfPeoples().toString());
+        floor.setText(house.getFloor().toString());
+        area.setText(house.getArea().toString());
+
+        List sexArray = Arrays.asList(getResources().getStringArray(R.array.sex));
+        preferredSex.setSelection(sexArray.indexOf(house.getPreferredSex()));
+
+        price.setText(house.getPrice().toString());
+        billsCheckbox.setChecked(house.getInclusive());
+        bills.setText(house.getArea().toString());
+        deposit.setText(house.getArea().toString());
+
+        availability.setText(dateFormat.format(house.getAvailability()));
+        minimumStayRequiredCheckBox.setChecked(house.getMinimumStayRequired() == 0);
+        minimumStayRequired.setText(house.getMinimumStayRequired().toString());
+
+        pet.setChecked(house.getPet());
+        english.setChecked(house.getEnglish());
+        lift.setChecked(house.getLift());
+
+        description.setText(house.getDescription());
     }
 
     private void initValidation() {
@@ -313,6 +512,12 @@ public class AddHouseActivity extends AppCompatActivity {
         newHouse.setDescription(description.getText().toString());
 
         return newHouse;
+    }
+
+    private House updateHouse(String id) {
+        House updateHouse = newHouse();
+        updateHouse.set_id(id);
+        return updateHouse;
     }
 
     @Override

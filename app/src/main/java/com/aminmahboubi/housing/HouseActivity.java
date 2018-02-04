@@ -1,24 +1,22 @@
 package com.aminmahboubi.housing;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.aminmahboubi.housing.api.HouseAPI;
 import com.aminmahboubi.housing.model.Favourite;
 import com.aminmahboubi.housing.model.House;
-import com.aminmahboubi.housing.model.UniqueIdentifier;
-import com.basgeekball.awesomevalidation.AwesomeValidation;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -70,14 +68,12 @@ public class HouseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_house);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.house);
 
         initUI();
 
-        House house = (House) getIntent().getExtras().getSerializable("house");
-
+        House house = (House) getIntent().getSerializableExtra("house");
         initData(getApplicationContext(), house, getIntent().getExtras().getBoolean("editable"));
-
-
     }
 
     private void initUI() {
@@ -120,8 +116,8 @@ public class HouseActivity extends AppCompatActivity {
         delete = findViewById(R.id.delete);
     }
 
-    @SuppressLint("SetTextI18n")
-    private void initData(Context context, House house, Boolean editable){
+    @SuppressLint({"StaticFieldLeak", "SetTextI18n"})
+    private void initData(Context context, House house, Boolean editable) {
         name.setText(String.format("%s %s", house.getName(), house.getSurname()));
         email.setText(house.getEmail());
         phone.setText(house.getPhone());
@@ -153,17 +149,55 @@ public class HouseActivity extends AppCompatActivity {
 
         description.setText(house.getDescription());
 
-        fab.setImageResource(Favourite.getInstance(context).getFav(house.get_id())?R.drawable.ic_star_filled_24dp:R.drawable.ic_star_empty_24dp);
+        fab.setImageResource(Favourite.getInstance(context).getFav(house.get_id()) ? R.drawable.ic_star_filled_24dp : R.drawable.ic_star_empty_24dp);
         fab.setOnClickListener(v -> {
-            fab.setImageResource(Favourite.getInstance(context).flipFav(house.get_id())?R.drawable.ic_star_filled_24dp:R.drawable.ic_star_empty_24dp);
+            fab.setImageResource(Favourite.getInstance(context).flipFav(house.get_id()) ? R.drawable.ic_star_filled_24dp : R.drawable.ic_star_empty_24dp);
         });
 
-        if (editable){
-            editableCard.setVisibility(View.VISIBLE);
-            edit.setOnClickListener( v -> {});
-            delete.setOnClickListener( v -> {
-                String _uid = UniqueIdentifier.getUniqueID(context);
+        if (editable) {
+            final ProgressDialog dialog = new ProgressDialog(HouseActivity.this);
+            dialog.setMessage(getString(R.string.async_delete));
+            dialog.setCancelable(false);
 
+            editableCard.setVisibility(View.VISIBLE);
+            edit.setOnClickListener(v -> {
+                Intent intent = new Intent(HouseActivity.this, AddHouseActivity.class);
+                intent.putExtra("house", house);
+                startActivity(intent);
+                finish();
+            });
+            delete.setOnClickListener(v -> {
+
+                new AsyncTask<House, Void, String>() {
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        dialog.show();
+                    }
+
+                    @Override
+                    protected void onPostExecute(String message) {
+                        super.onPostExecute(message);
+                        if (message == null) {
+                            Toast.makeText(getApplicationContext(), R.string.async_null, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                        dialog.dismiss();
+
+                    }
+
+                    @Override
+                    protected String doInBackground(House... house) {
+                        try {
+                            return HouseAPI.getInstance(getApplicationContext()).deleteHouse(house[0]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+                }.execute(house);
 
             });
         }

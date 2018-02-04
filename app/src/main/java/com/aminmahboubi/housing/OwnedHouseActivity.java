@@ -23,10 +23,9 @@ import java.util.ArrayList;
 public class OwnedHouseActivity extends AppCompatActivity {
     final String TAG = "OwnedHouseActivity";
 
-    private ArrayList<House> houses = new ArrayList<>();
+    private ArrayList<House> houses;
     private RecyclerView recyclerView;
     private HouseAdapter houseAdapter;
-
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -34,14 +33,12 @@ public class OwnedHouseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owned_house);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.my_houses);
 
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        houseAdapter = new HouseAdapter(houses);
-        recyclerView.setAdapter(houseAdapter);
-
 
         final ProgressDialog dialog = new ProgressDialog(OwnedHouseActivity.this);
         dialog.setMessage("Loading Data, Please Wait...");
@@ -62,7 +59,8 @@ public class OwnedHouseActivity extends AppCompatActivity {
                     return;
                 }
                 houses = houseList;
-                houseAdapter.notifyDataSetChanged();
+                houseAdapter = new HouseAdapter(houses);
+                recyclerView.setAdapter(houseAdapter);
 
                 dialog.dismiss();
             }
@@ -70,7 +68,7 @@ public class OwnedHouseActivity extends AppCompatActivity {
             @Override
             protected ArrayList<House> doInBackground(Void... voids) {
                 try {
-                    ArrayList<House> houses = HouseAPI.getInstance(getApplicationContext()).getUserHousesSync();
+                    ArrayList<House> houses = HouseAPI.getInstance(getApplicationContext()).getUserHouses();
                     return houses;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -110,7 +108,6 @@ public class OwnedHouseActivity extends AppCompatActivity {
 
         });
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {

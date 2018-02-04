@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "979174533425",
+    "firebase_url": "https://housing-dima.firebaseio.com",
+    "project_id": "housing-dima",
+    "storage_bucket": "housing-dima.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979174533425:android:1e2cde79f45be31f",
+        "android_client_info": {
+          "package_name": "com.aminmahboubi.housing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "979174533425-eoofhv0t3dm9bhn0qq9gl4g82re4rebp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aminmahboubi.housing",
+            "certificate_hash": "5e7cfbff64bc9193b71b61d4fac145601ad829b6"
+          }
+        },
+        {
+          "client_id": "979174533425-u6mvogplamcpkpb89pgid4a950ukjtak.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIqA6vSWthnrKKkxqIWMY9qV0W904rAuQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979174533425-u6mvogplamcpkpb89pgid4a950ukjtak.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

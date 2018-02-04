@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class HouseAPI {
     }
 
 
-    public void getAll(final GetHouseAPIListener getHouseAPIListener) {
+    public void getAllAsync(final GetHouseAPIListener getHouseAPIListener) {
 
         StringRequest getAll = new StringRequest(Request.Method.GET, baseUrl,
                 response -> {
@@ -59,18 +60,30 @@ public class HouseAPI {
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(getAll);
     }
 
-    public void postHouse(House house) throws JSONException {
-        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(mContext),
-                response -> {
-                    Log.d("postHouse", "onResponse: " + response);
-                    Toast.makeText(mContext, response.toString(), Toast.LENGTH_SHORT).show();
-                },
-                e -> {
-                    Log.e("postHouse", "onResponse: " + e);
-                    Toast.makeText(mContext, e.toString(), Toast.LENGTH_SHORT).show();
-                });
+    public String postHouse(House house) throws JSONException, ExecutionException, InterruptedException {
+        RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
+        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(mContext), requestFuture, requestFuture);
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(postHouse);
+
+        return requestFuture.get().getString("message");
+    }
+
+    //TODO REMOVE
+    public void postHouseAsync(House house) throws JSONException {
+        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(mContext),
+                response -> Log.d("postHouseAsync: ", "Not saved"), e -> Log.d("postHouseAsync: ", "Not saved"));
+        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(postHouse);
+    }
+
+    public String updateHouse(House house) throws JSONException, ExecutionException, InterruptedException {
+        String url = userUrl + UniqueIdentifier.getUniqueID(mContext) + "/" + house.get_id();
+        RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
+
+        JsonObjectRequest putHouse = new JsonObjectRequest(Request.Method.PUT, url, house.toJSON(mContext), requestFuture, requestFuture);
+        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(putHouse);
+
+        return requestFuture.get().getString("message");
     }
 
     public String deleteHouse(House house) throws ExecutionException, InterruptedException, JSONException {
@@ -83,11 +96,11 @@ public class HouseAPI {
         return requestFuture.get().getString("message");
     }
 
-    public ArrayList<House> getAllSync() throws ExecutionException, InterruptedException, JSONException {
+    public ArrayList<House> getAll() throws ExecutionException, InterruptedException, JSONException {
         return getAllHousesSync(baseUrl);
     }
 
-    public ArrayList<House> getUserHousesSync() throws ExecutionException, InterruptedException, JSONException {
+    public ArrayList<House> getUserHouses() throws ExecutionException, InterruptedException, JSONException {
         String url = userUrl + UniqueIdentifier.getUniqueID(mContext);
         return getAllHousesSync(url);
     }

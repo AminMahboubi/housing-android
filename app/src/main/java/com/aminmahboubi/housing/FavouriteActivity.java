@@ -31,8 +31,9 @@ public class FavouriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.favourites);
 
-        ArrayList<House> houseList = (ArrayList<House>) getIntent().getExtras().get("house");
+        ArrayList<House> houseList = (ArrayList<House>) getIntent().getSerializableExtra("house");
         allFav = Favourite.getInstance(getApplicationContext()).getAllFav();
 
         List<House> favList = from(houseList).filter(house -> allFav.contains(house.get_id())).toList();
