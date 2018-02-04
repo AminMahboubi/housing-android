@@ -5,10 +5,8 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneNumberUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,7 +14,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.aminmahboubi.housing.R;
 import com.aminmahboubi.housing.api.HouseAPI;
 import com.aminmahboubi.housing.model.House;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
@@ -30,12 +27,12 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.common.collect.Range;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -191,6 +188,15 @@ public class AddHouseActivity extends AppCompatActivity {
         surname = findViewById(R.id.surname);
         email = findViewById(R.id.email);
         phone = findViewById(R.id.phone);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user.getProviders().get(0).equals("phone")) {
+            phone.setText(user.getPhoneNumber());
+            phone.setFocusable(false);
+        } else {
+            email.setText(user.getEmail());
+            email.setFocusable(false);
+        }
 
         addressValidator = findViewById(R.id.address);
         placeAutocompleteFragment = (PlaceAutocompleteFragment)

@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else if (id == R.id.nav_new) {
                 newHouseActivity();
+                return false;
             }
             drawer.closeDrawer(GravityCompat.START);
             return false;
@@ -248,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
                 }
             }
-
         }
 
         @Override
