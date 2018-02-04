@@ -9,20 +9,15 @@
             android:icon="@drawable/ic_star_empty_24dp"
             android:title="Favourite" />
         <item
+            android:id="@+id/nav_new"
+            android:icon="@drawable/ic_add_black_24dp"
+            android:title="New House" />
+        <item
             android:id="@+id/nav_owned"
             android:icon="@drawable/ic_place_black_24dp"
             android:title="My Houses" />
 
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-
-        </menu>
-    </item>
 
 </menu>

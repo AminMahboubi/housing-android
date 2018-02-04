@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +28,6 @@ import com.aminmahboubi.housing.model.House;
 import com.aminmahboubi.housing.view.ListFragment;
 import com.aminmahboubi.housing.view.MapFragment;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -44,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private MapFragment mapFragment;
     private ListFragment listFragment;
     private SearchView searchView;
-    private CoordinatorLayout coordinatorLayout;
+    private DrawerLayout drawer;
+
     private FirebaseAuth mAuth;
     private TextView userId;
     private TextView signOut;
@@ -55,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        coordinatorLayout = findViewById(R.id.coordinator);
         initDrawer();
         initNavigation();
         initFab();
@@ -73,11 +71,11 @@ public class MainActivity extends AppCompatActivity {
             navHeader.setOnClickListener(null);
             signOut.setVisibility(View.VISIBLE);
             signOut.setOnClickListener(v -> {
-                Snackbar.make(v, "Signing out ...", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(drawer, "Signing out ...", Snackbar.LENGTH_SHORT).show();
                 AuthUI.getInstance().signOut(getApplicationContext())
                         .addOnCompleteListener(task -> {
                             this.onStart();
-                            Snackbar.make(v, "Signed Out!", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(drawer, "Signed Out!", Snackbar.LENGTH_SHORT).show();
                         });
             });
 
@@ -95,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -106,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 super.onBackPressed();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -161,29 +157,38 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_owned) {
                 Intent intent = new Intent(MainActivity.this, OwnedHouseActivity.class);
                 startActivity(intent);
-            }
 
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            } else if (id == R.id.nav_new) {
+                newHouseActivity();
+            }
             drawer.closeDrawer(GravityCompat.START);
             return false;
         });
     }
 
     private void initFab() {
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
-            Intent AddHouseIntent = new Intent(getApplicationContext(), AddHouseActivity.class);
-            startActivity(AddHouseIntent);
-        });
+        findViewById(R.id.fab).setOnClickListener(v -> newHouseActivity());
     }
 
     private void initDrawer() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+    }
+
+    private void newHouseActivity() {
+        if (houses == null) {
+            Toast.makeText(getApplicationContext(), R.string.async_null, Toast.LENGTH_SHORT).show();
+        } else if (mAuth.getCurrentUser() == null) {
+            drawer.openDrawer(Gravity.LEFT);
+            Snackbar.make(drawer, "To post a house, you have to Sign in first!", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Intent AddHouseIntent = new Intent(getApplicationContext(), AddHouseActivity.class);
+            startActivity(AddHouseIntent);
+        }
     }
 
     private void signIn() {
@@ -198,13 +203,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
-                Snackbar.make(coordinatorLayout, "Successfully Signed In!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(drawer, "Successfully Signed In!", Snackbar.LENGTH_SHORT).show();
             } else {
-                Snackbar.make(coordinatorLayout, "Sign In Failed!", Snackbar.LENGTH_INDEFINITE)
-                        .setActionTextColor(Color.RED)
+                Snackbar.make(drawer, "Sign In Failed!", Snackbar.LENGTH_INDEFINITE).setActionTextColor(Color.RED)
                         .setAction("RETRY", view -> signIn()).show();
             }
         }
@@ -234,8 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
-                Snackbar.make(coordinatorLayout, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
-                        .setActionTextColor(Color.RED)
+                Snackbar.make(drawer, "No internet connection!", Snackbar.LENGTH_INDEFINITE).setActionTextColor(Color.RED)
                         .setAction("RETRY", view -> new LoadDataTask().execute()).show();
             } else {
                 houses = houseList;
@@ -261,6 +262,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }
