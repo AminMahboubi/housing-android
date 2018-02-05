@@ -80,7 +80,7 @@ public class House implements Serializable{
         JSONObject jsonObject = new JSONObject(gson.toJson(this));
         jsonObject.remove("_id");
         jsonObject.remove("insertDate");
-        jsonObject.put("_uid", UniqueIdentifier.getUniqueID(context));
+        jsonObject.put("_uid", UniqueIdentifier.getUniqueID());
 
         return jsonObject;
     }

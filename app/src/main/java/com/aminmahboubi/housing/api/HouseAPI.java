@@ -77,7 +77,7 @@ public class HouseAPI {
     }
 
     public String updateHouse(House house) throws JSONException, ExecutionException, InterruptedException {
-        String url = userUrl + UniqueIdentifier.getUniqueID(mContext) + "/" + house.get_id();
+        String url = userUrl + UniqueIdentifier.getUniqueID() + "/" + house.get_id();
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
         JsonObjectRequest putHouse = new JsonObjectRequest(Request.Method.PUT, url, house.toJSON(mContext), requestFuture, requestFuture);
@@ -87,7 +87,7 @@ public class HouseAPI {
     }
 
     public String deleteHouse(House house) throws ExecutionException, InterruptedException, JSONException {
-        String url = userUrl + UniqueIdentifier.getUniqueID(mContext) + "/" + house.get_id();
+        String url = userUrl + UniqueIdentifier.getUniqueID() + "/" + house.get_id();
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
         JsonObjectRequest getAll = new JsonObjectRequest(Request.Method.DELETE, url, null, requestFuture, requestFuture);
@@ -101,7 +101,7 @@ public class HouseAPI {
     }
 
     public ArrayList<House> getUserHouses() throws ExecutionException, InterruptedException, JSONException {
-        String url = userUrl + UniqueIdentifier.getUniqueID(mContext);
+        String url = userUrl + UniqueIdentifier.getUniqueID();
         return getAllHousesSync(url);
     }
 
