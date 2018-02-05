@@ -18,7 +18,6 @@ import com.aminmahboubi.housing.api.HouseAPI;
 import com.aminmahboubi.housing.model.House;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
-import com.basgeekball.awesomevalidation.helper.CustomValidation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
@@ -388,84 +387,60 @@ public class AddHouseActivity extends AppCompatActivity {
         validation.addValidation(name, "[a-zA-Z\\s]+", "Enter a Valid Name");
         validation.addValidation(surname, "[a-zA-Z\\s]+", "Enter a Valid Surname");
         validation.addValidation(email, android.util.Patterns.EMAIL_ADDRESS, "Valid Email Required");
-        validation.addValidation(phone, "Valid Phone Required", new CustomValidation() {
-            @Override
-            public boolean compare(String input) {
-                if (input.length() < 9)
-                    return false;
-                return PhoneNumberUtils.isGlobalPhoneNumber(input);
-            }
-        });
-        validation.addValidation(addressValidator, "Enter a valid Address", new CustomValidation() {
-            @Override
-            public boolean compare(String input) {
-                if (address == null)
-                    return false;
-                return true;
-            }
-        });
+        validation.addValidation(phone, input -> input.length() >= 9 && PhoneNumberUtils.isGlobalPhoneNumber(input), "Valid Phone Required");
+        validation.addValidation(addressValidator, input -> address != null, "Enter a valid Address");
         validation.addValidation(numberOfRooms, Range.closed(1, 10), "Total Room Numbers in House");
         validation.addValidation(numberOfPeoples, Range.closed(1, 10), "Total People Numbers in House");
         validation.addValidation(floor, Range.closed(0, 20), "Which floor is the house?");
         validation.addValidation(area, Range.closed(5, 500), "Area of the House/Room");
         validation.addValidation(price, Range.closed(1, 3000), "Rent price between 1 and 3000 Euro");
-        validation.addValidation(bills, "Bills between 0 and 500 Euro", new CustomValidation() {
-            @Override
-            public boolean compare(String input) {
-                if (!billsCheck) {
-                    if (input.length() == 0)
+        validation.addValidation(bills, input -> {
+            if (!billsCheck) {
+                if (input.length() == 0)
+                    return false;
+                else {
+                    int value = Integer.valueOf(input);
+                    if (value < 0 || value > 500)
                         return false;
-                    else {
-                        int value = Integer.valueOf(input);
-                        if (value < 0 || value > 500)
-                            return false;
-                    }
                 }
-                return true;
             }
-        });
+            return true;
+        }, "Bills between 0 and 500 Euro");
         validation.addValidation(deposit, Range.closed(0, 10000), "Deposit between 0 and 10k Euro");
-        validation.addValidation(availability, "House become free from ...?", new CustomValidation() {
-            @Override
-            public boolean compare(String input) {
-                String dateRegex = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
-                if (!input.matches(dateRegex))
+        validation.addValidation(availability, input -> {
+            String dateRegex = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
+            if (!input.matches(dateRegex))
+                return false;
+            try {
+                Date date = dateFormat.parse(input);
+                date.setTime(date.getTime() + 1);
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+
+                if (calendar.getTime().after(dateFormat.parse(input)))
                     return false;
-                try {
-                    Date date = dateFormat.parse(input);
-                    date.setTime(date.getTime() + 1);
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
-
-                    if (calendar.getTime().after(dateFormat.parse(input)))
-                        return false;
-                } catch (ParseException e) {
-                    e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }, "House become free from ...?");
+        validation.addValidation(minimumStayRequired, input -> {
+            if (minimumStayRequiredCheck) {
+                if (input.length() == 0)
                     return false;
-                }
-                return true;
-            }
-        });
-        validation.addValidation(minimumStayRequired, "Minimum Stay between 0 and 365 Day", new CustomValidation() {
-            @Override
-            public boolean compare(String input) {
-                if (minimumStayRequiredCheck) {
-                    if (input.length() == 0)
+                else {
+                    int value = Integer.valueOf(input);
+                    if (value < 0 || value > 365)
                         return false;
-                    else {
-                        int value = Integer.valueOf(input);
-                        if (value < 0 || value > 365)
-                            return false;
-                    }
                 }
-                return true;
             }
-        });
-
+            return true;
+        }, "Minimum Stay between 0 and 365 Day");
     }
 
     private House newHouse() {

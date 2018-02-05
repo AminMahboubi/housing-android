@@ -1,22 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.aminmahboubi.housing"
-
-        minSdkVersion rootProject.ext.minSdk
-        targetSdkVersion rootProject.ext.targetSdk
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode = 1
+        versionName = "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -27,6 +25,10 @@ android {
 }
 
 dependencies {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.0.2'
     implementation 'com.android.support:design:27.0.2'
@@ -34,18 +36,18 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.2'
     implementation 'com.android.support:cardview-v7:27.0.2'
     implementation 'com.android.support:recyclerview-v7:27.0.2'
-    implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.android.volley:volley:1.1.0'
-    compile 'com.google.code.gson:gson:2.8.2'
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
-    compile 'com.google.android.gms:play-services-location:11.8.0'
-    compile 'com.google.android.gms:play-services-places:11.8.0'
+    implementation "com.android.support:customtabs:27.0.2"
 
-    implementation project(':AwesomeValidation')
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.android.gms:play-services-places:11.8.0'
+    implementation "com.google.android.gms:play-services-auth:11.8.0"
+
+    implementation 'com.google.firebase:firebase-auth:11.8.0'
+    implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
+    implementation 'com.android.volley:volley:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.basgeekball:awesome-validation:3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -1,1 +1,1 @@
-include ':app', ':AwesomeValidation'
+include ':app'
