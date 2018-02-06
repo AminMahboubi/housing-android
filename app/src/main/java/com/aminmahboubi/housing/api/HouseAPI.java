@@ -1,7 +1,6 @@
 package com.aminmahboubi.housing.api;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.aminmahboubi.housing.model.House;
 import com.android.volley.Request;
@@ -25,11 +24,11 @@ import java.util.concurrent.ExecutionException;
 
 public class HouseAPI {
 
-    private static Context mContext;
     private static HouseAPI mInstance;
     private final String baseUrl = "http://dima.aminmahboubi.com/api/house";
     private final String userUrl = baseUrl + "/user/";
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
+    private Context mContext;
 
     private HouseAPI(Context context) {
         mContext = context;
@@ -42,26 +41,11 @@ public class HouseAPI {
         return mInstance;
     }
 
-
-    public void getAllAsync(final GetHouseAPIListener getHouseAPIListener) {
-
-        StringRequest getAll = new StringRequest(Request.Method.GET, baseUrl,
-                response -> {
-                    try {
-                        ArrayList<House> houses = parseGetAllJSON(response);
-                        getHouseAPIListener.onSuccess(houses);
-                    } catch (JSONException e) {
-                        getHouseAPIListener.onError(e);
-                    }
-                }, e -> getHouseAPIListener.onError(e));
-
-        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(getAll);
-    }
-
     public String postHouse(House house) throws JSONException, ExecutionException, InterruptedException {
+        String url = userUrl + FirebaseAuth.getInstance().getCurrentUser().getUid();
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
-        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(), requestFuture, requestFuture);
+        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, url, house.toJSON(), requestFuture, requestFuture);
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(postHouse);
 
         return requestFuture.get().getString("message");
@@ -97,22 +81,32 @@ public class HouseAPI {
     }
 
     private ArrayList<House> getAllHousesSync(String url) throws ExecutionException, InterruptedException, JSONException {
-
         RequestFuture<String> requestFuture = RequestFuture.newFuture();
 
         StringRequest getAll = new StringRequest(Request.Method.GET, url, requestFuture, requestFuture);
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(getAll);
 
         String response = requestFuture.get();
-        ArrayList<House> houses = parseGetAllJSON(response);
-        return houses;
+        return parseGetAllJSON(response);
+    }
+
+    public void getAllAsync(final GetHouseAPIListener getHouseAPIListener) {
+        StringRequest getAll = new StringRequest(Request.Method.GET, baseUrl,
+                response -> {
+                    try {
+                        ArrayList<House> houses = parseGetAllJSON(response);
+                        getHouseAPIListener.onSuccess(houses);
+                    } catch (JSONException e) {
+                        getHouseAPIListener.onError(e);
+                    }
+                }, getHouseAPIListener::onError);
+
+        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(getAll);
     }
 
     private ArrayList<House> parseGetAllJSON(String response) throws JSONException {
-
         Type HouseArrayListType = new TypeToken<ArrayList<House>>() {
         }.getType();
         return gson.fromJson(response, HouseArrayListType);
     }
-
 }

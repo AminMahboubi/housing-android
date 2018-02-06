@@ -1,7 +1,6 @@
 package com.aminmahboubi.housing.model;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -77,7 +76,7 @@ public class House implements Serializable {
         JSONObject jsonObject = new JSONObject(gson.toJson(this));
         jsonObject.remove("_id");
         jsonObject.remove("insertDate");
-        jsonObject.put("_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        jsonObject.remove("updateDate");
 
         return jsonObject;
     }
@@ -150,17 +149,22 @@ public class House implements Serializable {
         return campus;
     }
 
-    public void setCampus(String campus) {
-        if (campus.equals("Leonardo"))
-            this.campus = Campus.Leonardo;
-        else if (campus.equals("Bovisa"))
-            this.campus = Campus.Bovisa;
-        else if (campus.equals("None"))
-            this.campus = Campus.None;
-    }
-
     public void setCampus(Campus campus) {
         this.campus = campus;
+    }
+
+    public void setCampus(String campus) {
+        switch (campus) {
+            case "Leonardo":
+                setCampus(Campus.Leonardo);
+                break;
+            case "Bovisa":
+                setCampus(Campus.Bovisa);
+                break;
+            case "None":
+                setCampus(Campus.None);
+                break;
+        }
     }
 
     public String getEmail() {
@@ -183,17 +187,22 @@ public class House implements Serializable {
         return preferredSex;
     }
 
-    public void setPreferredSex(String preferredSex) {
-        if (preferredSex.equals("Girl"))
-            this.preferredSex = PreferredSex.Girl;
-        else if (preferredSex.equals("Boy"))
-            this.preferredSex = PreferredSex.Boy;
-        else if (preferredSex.equals("Both"))
-            this.preferredSex = PreferredSex.Both;
-    }
-
     public void setPreferredSex(PreferredSex preferredSex) {
         this.preferredSex = preferredSex;
+    }
+
+    public void setPreferredSex(String preferredSex) {
+        switch (preferredSex) {
+            case "Girl":
+                setPreferredSex(PreferredSex.Girl);
+                break;
+            case "Boy":
+                setPreferredSex(PreferredSex.Boy);
+                break;
+            case "Both":
+                setPreferredSex(PreferredSex.Both);
+                break;
+        }
     }
 
     public String getDescription() {
@@ -224,34 +233,44 @@ public class House implements Serializable {
         return houseType;
     }
 
-    public void setHouseType(String houseType) {
-        if (houseType.equals("Bed"))
-            this.houseType = HouseType.Bed;
-        else if (houseType.equals("Bedroom"))
-            this.houseType = HouseType.Bedroom;
-        else if (houseType.equals("House"))
-            this.houseType = HouseType.House;
-    }
-
     public void setHouseType(HouseType houseType) {
         this.houseType = houseType;
+    }
+
+    public void setHouseType(String houseType) {
+        switch (houseType) {
+            case "Bed":
+                setHouseType(HouseType.Bed);
+                break;
+            case "Bedroom":
+                setHouseType(HouseType.Bedroom);
+                break;
+            case "House":
+                setHouseType(HouseType.House);
+                break;
+        }
     }
 
     public Bed getBed() {
         return bed;
     }
 
-    public void setBed(String bed) {
-        if (bed.equals("Single"))
-            this.bed = Bed.Single;
-        else if (bed.equals("King"))
-            this.bed = Bed.King;
-        else if (bed.equals("Double"))
-            this.bed = Bed.Double;
-    }
-
     public void setBed(Bed bed) {
         this.bed = bed;
+    }
+
+    public void setBed(String bed) {
+        switch (bed) {
+            case "Single":
+                setBed(Bed.Single);
+                break;
+            case "King":
+                setBed(Bed.King);
+                break;
+            case "Double":
+                setBed(Bed.Double);
+                break;
+        }
     }
 
     public Integer getNumberOfRooms() {
@@ -302,11 +321,13 @@ public class House implements Serializable {
         this.area = area;
     }
 
-    public List<String> getImageLinks() {
+    //TODO To be developed
+    private List<String> getImageLinks() {
         return imageLinks;
     }
 
-    public void setImageLinks(List<String> imageLinks) {
+    //TODO To be developed
+    private void setImageLinks(List<String> imageLinks) {
         this.imageLinks = imageLinks;
     }
 
@@ -322,16 +343,8 @@ public class House implements Serializable {
         return insertDate;
     }
 
-    public void setInsertDate(Date insertDate) {
-        this.insertDate = insertDate;
-    }
-
     public Date getUpdateDate() {
         return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
     }
 
     @Override
