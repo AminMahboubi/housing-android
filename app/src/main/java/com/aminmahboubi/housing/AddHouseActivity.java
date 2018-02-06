@@ -349,7 +349,7 @@ public class AddHouseActivity extends AppCompatActivity {
 
         List campusArray = Arrays.asList(getResources().getStringArray(R.array.campus));
         campus.setSelection(campusArray.indexOf(house.getCampus()));
-
+        //TODO FIX the spinner return value
         List houseTypeArray = Arrays.asList(getResources().getStringArray(R.array.house));
         houseType.setSelection(houseTypeArray.indexOf(house.getHouseType()));
 

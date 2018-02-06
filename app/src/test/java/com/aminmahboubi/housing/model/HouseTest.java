@@ -1,25 +1,13 @@
 package com.aminmahboubi.housing.model;
 
-import android.app.Activity;
-import android.content.Context;
-
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import junit.framework.TestCase;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Created by amin on 2/6/18.
@@ -28,21 +16,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 @RunWith(MockitoJUnitRunner.class)
 public class HouseTest extends TestCase {
 
-    @Mock
-    FirebaseAuth firebaseAuth;
-    @Mock
-    Context context;
-    @Mock
-    Activity activity;
-
-
     House house;
 
     @Before
     public void initMocks() {
         house = new House();
-        Mockito.when(FirebaseAuth.getInstance()).thenReturn(firebaseAuth);
-        Mockito.when(firebaseAuth.getCurrentUser().getUid()).thenReturn("");
     }
 
     @Test
@@ -51,13 +29,6 @@ public class HouseTest extends TestCase {
         house.setLng(44.44);
 
         assertEquals(house.getLatLng(), new LatLng(33.33, 44.44));
-    }
-
-    @Test
-    public void toJsonTest() throws JSONException {
-
-        JSONObject houseJson = house.toJSON();
-
     }
 
     @Test

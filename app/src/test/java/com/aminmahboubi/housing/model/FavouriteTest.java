@@ -25,12 +25,13 @@ public class FavouriteTest extends TestCase {
     @Mock
     Context context;
 
-    Favourite favourite;
-
     @Mock
     SharedPreferences sharedPreferences;
+
     @Mock
     SharedPreferences.Editor editor;
+
+    Favourite favourite;
 
 
     @Before
@@ -40,11 +41,7 @@ public class FavouriteTest extends TestCase {
         Mockito.when(sharedPreferences.edit()).thenReturn(editor);
         Mockito.when(editor.putString(anyString(), anyString())).thenReturn(editor);
 
-
-
         favourite = Favourite.getInstance(context);
-
-
     }
 
     @Test
