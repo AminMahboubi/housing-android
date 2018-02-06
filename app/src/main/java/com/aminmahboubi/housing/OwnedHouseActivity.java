@@ -27,7 +27,6 @@ public class OwnedHouseActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private HouseAdapter houseAdapter;
 
-    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +38,45 @@ public class OwnedHouseActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+            });
 
-        final ProgressDialog dialog = new ProgressDialog(OwnedHouseActivity.this);
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                if (child != null && gestureDetector.onTouchEvent(motionEvent)) {
+                    Intent intent = new Intent(OwnedHouseActivity.this, HouseActivity.class);
+                    intent.putExtra("house", houseAdapter.getItem(recyclerView.getChildAdapterPosition(child)));
+                    intent.putExtra("editable", true);
+                    startActivity(intent);
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {}
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+        });
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        ProgressDialog dialog = new ProgressDialog(OwnedHouseActivity.this);
         dialog.setMessage("Loading Data, Please Wait...");
         dialog.setCancelable(false);
 
         new AsyncTask<Void, Void, ArrayList<House>>() {
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -68,45 +100,13 @@ public class OwnedHouseActivity extends AppCompatActivity {
             @Override
             protected ArrayList<House> doInBackground(Void... voids) {
                 try {
-                    ArrayList<House> houses = HouseAPI.getInstance(getApplicationContext()).getUserHouses();
-                    return houses;
+                    return HouseAPI.getInstance(getApplicationContext()).getUserHouses();
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
             }
-
         }.execute();
-
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-            });
-
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-                if (child != null && gestureDetector.onTouchEvent(motionEvent)) {
-                    Intent intent = new Intent(OwnedHouseActivity.this, HouseActivity.class);
-                    intent.putExtra("house", houseAdapter.getItem(recyclerView.getChildAdapterPosition(child)));
-                    intent.putExtra("editable", true);
-                    startActivity(intent);
-                }
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-            }
-
-        });
     }
 
     @Override
