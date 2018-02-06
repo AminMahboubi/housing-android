@@ -2,20 +2,18 @@ package com.aminmahboubi.housing.api;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.aminmahboubi.housing.model.House;
-import com.aminmahboubi.housing.model.UniqueIdentifier;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -77,7 +75,7 @@ public class HouseAPI {
     }
 
     public String updateHouse(House house) throws JSONException, ExecutionException, InterruptedException {
-        String url = userUrl + UniqueIdentifier.getUniqueID() + "/" + house.get_id();
+        String url = userUrl + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" + house.get_id();
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
         JsonObjectRequest putHouse = new JsonObjectRequest(Request.Method.PUT, url, house.toJSON(mContext), requestFuture, requestFuture);
@@ -87,7 +85,7 @@ public class HouseAPI {
     }
 
     public String deleteHouse(House house) throws ExecutionException, InterruptedException, JSONException {
-        String url = userUrl + UniqueIdentifier.getUniqueID() + "/" + house.get_id();
+        String url = userUrl + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" + house.get_id();
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
         JsonObjectRequest getAll = new JsonObjectRequest(Request.Method.DELETE, url, null, requestFuture, requestFuture);
@@ -101,7 +99,7 @@ public class HouseAPI {
     }
 
     public ArrayList<House> getUserHouses() throws ExecutionException, InterruptedException, JSONException {
-        String url = userUrl + UniqueIdentifier.getUniqueID();
+        String url = userUrl + FirebaseAuth.getInstance().getCurrentUser().getUid();
         return getAllHousesSync(url);
     }
 

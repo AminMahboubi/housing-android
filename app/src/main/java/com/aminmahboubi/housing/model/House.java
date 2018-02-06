@@ -5,6 +5,7 @@ import android.provider.Settings;
 
 import com.aminmahboubi.housing.MainActivity;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -80,7 +81,7 @@ public class House implements Serializable{
         JSONObject jsonObject = new JSONObject(gson.toJson(this));
         jsonObject.remove("_id");
         jsonObject.remove("insertDate");
-        jsonObject.put("_uid", UniqueIdentifier.getUniqueID());
+        jsonObject.put("_uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         return jsonObject;
     }
