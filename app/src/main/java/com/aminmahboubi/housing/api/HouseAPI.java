@@ -61,24 +61,17 @@ public class HouseAPI {
     public String postHouse(House house) throws JSONException, ExecutionException, InterruptedException {
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
-        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(mContext), requestFuture, requestFuture);
+        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(), requestFuture, requestFuture);
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(postHouse);
 
         return requestFuture.get().getString("message");
-    }
-
-    //TODO REMOVE
-    public void postHouseAsync(House house) throws JSONException {
-        JsonObjectRequest postHouse = new JsonObjectRequest(Request.Method.POST, baseUrl, house.toJSON(mContext),
-                response -> Log.d("postHouseAsync: ", "Not saved"), e -> Log.d("postHouseAsync: ", "Not saved"));
-        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(postHouse);
     }
 
     public String updateHouse(House house) throws JSONException, ExecutionException, InterruptedException {
         String url = userUrl + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" + house.get_id();
         RequestFuture<org.json.JSONObject> requestFuture = RequestFuture.newFuture();
 
-        JsonObjectRequest putHouse = new JsonObjectRequest(Request.Method.PUT, url, house.toJSON(mContext), requestFuture, requestFuture);
+        JsonObjectRequest putHouse = new JsonObjectRequest(Request.Method.PUT, url, house.toJSON(), requestFuture, requestFuture);
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(putHouse);
 
         return requestFuture.get().getString("message");
