@@ -1,9 +1,5 @@
 package com.aminmahboubi.housing.model;
 
-import android.content.Context;
-import android.provider.Settings;
-
-import com.aminmahboubi.housing.MainActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
@@ -21,7 +17,7 @@ import java.util.List;
  */
 
 
-public class House implements Serializable{
+public class House implements Serializable {
 
     String _id;
     String name;
@@ -72,11 +68,11 @@ public class House implements Serializable{
         this.lng = lng;
     }
 
-    public LatLng getLatLng(){
+    public LatLng getLatLng() {
         return new LatLng(this.getLat(), this.getLng());
     }
 
-    public JSONObject toJSON(Context context) throws JSONException {
+    public JSONObject toJSON() throws JSONException {
         Gson gson = new Gson();
         JSONObject jsonObject = new JSONObject(gson.toJson(this));
         jsonObject.remove("_id");
@@ -154,17 +150,17 @@ public class House implements Serializable{
         return campus;
     }
 
-    public void setCampus(Campus campus) {
-        this.campus = campus;
-    }
-
     public void setCampus(String campus) {
-        if (campus.equals("Bovisa"))
-            this.campus = Campus.Bovisa;
-        else if (campus.equals("Leonardo"))
+        if (campus.equals("Leonardo"))
             this.campus = Campus.Leonardo;
+        else if (campus.equals("Bovisa"))
+            this.campus = Campus.Bovisa;
         else if (campus.equals("None"))
             this.campus = Campus.None;
+    }
+
+    public void setCampus(Campus campus) {
+        this.campus = campus;
     }
 
     public String getEmail() {
@@ -187,16 +183,17 @@ public class House implements Serializable{
         return preferredSex;
     }
 
-    public void setPreferredSex(PreferredSex preferredSex) {
-        this.preferredSex = preferredSex;
-    }
     public void setPreferredSex(String preferredSex) {
         if (preferredSex.equals("Girl"))
             this.preferredSex = PreferredSex.Girl;
-        else if (preferredSex.equals("Both"))
-            this.preferredSex = PreferredSex.Both;
         else if (preferredSex.equals("Boy"))
             this.preferredSex = PreferredSex.Boy;
+        else if (preferredSex.equals("Both"))
+            this.preferredSex = PreferredSex.Both;
+    }
+
+    public void setPreferredSex(PreferredSex preferredSex) {
+        this.preferredSex = preferredSex;
     }
 
     public String getDescription() {
@@ -227,10 +224,6 @@ public class House implements Serializable{
         return houseType;
     }
 
-    public void setHouseType(HouseType houseType) {
-        this.houseType = houseType;
-    }
-
     public void setHouseType(String houseType) {
         if (houseType.equals("Bed"))
             this.houseType = HouseType.Bed;
@@ -240,12 +233,12 @@ public class House implements Serializable{
             this.houseType = HouseType.House;
     }
 
-    public Bed getBed() {
-        return bed;
+    public void setHouseType(HouseType houseType) {
+        this.houseType = houseType;
     }
 
-    public void setBed(Bed bed) {
-        this.bed = bed;
+    public Bed getBed() {
+        return bed;
     }
 
     public void setBed(String bed) {
@@ -255,6 +248,10 @@ public class House implements Serializable{
             this.bed = Bed.King;
         else if (bed.equals("Double"))
             this.bed = Bed.Double;
+    }
+
+    public void setBed(Bed bed) {
+        this.bed = bed;
     }
 
     public Integer getNumberOfRooms() {

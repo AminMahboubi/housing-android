@@ -37,15 +37,15 @@
 
 
     <string-array name="sex">
-        <item>Both</item>
         <item>Girl</item>
         <item>Boy</item>
+        <item>Both</item>
     </string-array>
 
     <string-array name="campus">
-        <item>None</item>
         <item>Leonardo</item>
         <item>Bovisa</item>
+        <item>None</item>
     </string-array>
 
     <string-array name="house">
