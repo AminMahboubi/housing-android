@@ -22,6 +22,7 @@ import static com.google.common.collect.FluentIterable.from;
 public class FavouriteActivity extends AppCompatActivity {
     final String TAG = "FavouriteActivity";
 
+    private ArrayList<House> houseList;
     private ArrayList<String> allFav;
     private RecyclerView recyclerView;
     private HouseAdapter houseAdapter;
@@ -33,18 +34,12 @@ public class FavouriteActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.favourites);
 
-        ArrayList<House> houseList = (ArrayList<House>) getIntent().getSerializableExtra("house");
-        allFav = Favourite.getInstance(getApplicationContext()).getAllFav();
-
-        List<House> favList = from(houseList).filter(house -> allFav.contains(house.get_id())).toList();
+        houseList = (ArrayList<House>) getIntent().getSerializableExtra("house");
 
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        houseAdapter = new HouseAdapter(favList);
-        recyclerView.setAdapter(houseAdapter);
-
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
@@ -65,15 +60,21 @@ public class FavouriteActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-            }
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {}
 
             @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-            }
-
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        allFav = Favourite.getInstance(getApplicationContext()).getAllFav();
+        List<House> favList = from(houseList).filter(house -> allFav.contains(house.get_id())).toList();
+        houseAdapter = new HouseAdapter(favList);
+        recyclerView.setAdapter(houseAdapter);
     }
 
     @Override
