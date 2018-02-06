@@ -57,6 +57,5 @@ public class FavouriteTest extends TestCase {
 
         assertFalse(favourite.flipFav("1"));
         assertFalse(favourite.getFav("1"));
-
     }
 }

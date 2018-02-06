@@ -4,6 +4,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import junit.framework.TestCase;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,13 @@ public class HouseTest extends TestCase {
     @Before
     public void initMocks() {
         house = new House();
+    }
+
+    @Test
+    public void toJsonTest() throws JSONException {
+        assertFalse(house.toJSON().has("_id"));
+        assertFalse(house.toJSON().has("insertDate"));
+        assertFalse(house.toJSON().has("updateDate"));
     }
 
     @Test
