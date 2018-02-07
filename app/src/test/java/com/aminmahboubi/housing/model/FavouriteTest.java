@@ -12,9 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-
 /**
  * Created by amin on 2/6/18.
  */
@@ -33,15 +30,15 @@ public class FavouriteTest extends TestCase {
 
     Favourite favourite;
 
-
     @Before
     public void initMocks() {
-
-        Mockito.when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPreferences);
+        Mockito.when(context.getSharedPreferences(Mockito.anyString(), Mockito.anyInt())).thenReturn(sharedPreferences);
         Mockito.when(sharedPreferences.edit()).thenReturn(editor);
-        Mockito.when(editor.putString(anyString(), anyString())).thenReturn(editor);
+        Mockito.when(editor.putBoolean(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(editor);
+        Mockito.when(sharedPreferences.getBoolean(Mockito.eq("2"), Mockito.anyBoolean())).thenReturn(true);
 
         favourite = Favourite.getInstance(context);
+
     }
 
     @Test
@@ -53,9 +50,16 @@ public class FavouriteTest extends TestCase {
     @Test
     public void flipFavTest() {
         assertTrue(favourite.flipFav("1"));
-        assertTrue(favourite.getFav("1"));
+        Mockito.verify(editor).apply();
+    }
 
-        assertFalse(favourite.flipFav("1"));
+    @Test
+    public void getNullFavTest() {
         assertFalse(favourite.getFav("1"));
+    }
+
+    @Test
+    public void getFavTest() {
+        assertTrue(favourite.getFav("2"));
     }
 }
